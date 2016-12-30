@@ -12,6 +12,7 @@ import SplashScreen from './src/components/SplashScreen';
 import HomeScreen from './src/components/HomeScreen';
 import HistoryScreen from './src/components/HistoryScreen';
 import BeginRunScreen from './src/components/BeginRunScreen';
+import RunningScreen from './src/components/RunningScreen';
 
 
 class App extends React.Component {
@@ -36,7 +37,7 @@ class App extends React.Component {
         }
 
         return (
-            <BeginRunScreen />
+            <RunningScreen />
         );
     }
 }
