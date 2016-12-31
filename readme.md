@@ -2,9 +2,15 @@
 
 UI & UX Prototype of redesigned Nike+ Running App.
 
+![gif](http://i.giphy.com/l3vR7vOmGZYEZwUbC.gif)
+
 ![proto](https://d13yacurqjgara.cloudfront.net/users/68551/screenshots/2764470/ezgif-3422165510.gif)
 
 Inspiration: https://dribbble.com/shots/2764470-Rethinking-Nike-Running
+
+## Demo
+
+Exponent: https://exp.host/@sonnylazuardi/nike-plus-running
 
 ## Features
 
