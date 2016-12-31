@@ -14,8 +14,23 @@ import HistoryScreen from './src/components/HistoryScreen';
 import BeginRunScreen from './src/components/BeginRunScreen';
 import RunningScreen from './src/components/RunningScreen';
 
+import {
+    createRouter,
+    NavigationProvider,
+    StackNavigation,
+    NavigationStyles
+} from '@exponent/ex-navigation';
+
+const Router = createRouter(() => ({
+    splash: () => SplashScreen,
+    home: () => HomeScreen,
+    begin: () => BeginRunScreen,
+    running: () => RunningScreen,
+    history: () => HistoryScreen
+}));
 
 class App extends React.Component {
+
     constructor(props) {
         super(props);
         this.state = {
@@ -37,7 +52,9 @@ class App extends React.Component {
         }
 
         return (
-            <RunningScreen />
+            <NavigationProvider router={Router}>
+                <StackNavigation initialRoute="splash" />
+            </NavigationProvider>
         );
     }
 }

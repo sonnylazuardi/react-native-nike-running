@@ -5,28 +5,202 @@ import {
     StyleSheet,
     Image,
     StatusBar,
-    TouchableOpacity
+    TouchableOpacity,
+    Animated,
+    Easing,
+    PanResponder,
+    ScrollView,
+    Dimensions
 } from 'react-native';
 
-import { Components } from 'exponent';
+import { Components, Location, Permissions } from 'exponent';
+import FadedZoom from '../animations/FadedZoom';
+import CardProfile from './CardProfile';
+import CardCoach from './CardCoach';
+import CardHistory from './CardHistory';
+
+const windowWidth = Dimensions.get('window').width;
 
 class HomeScreen extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            pan: new Animated.ValueXY(),
+            scale: new Animated.Value(1),
+            pulse: new Animated.Value(0),
+            carousel: false,
+            marker: {
+                latitude: -6.9107505,
+                longitude: 107.6629672,
+            },
+            region: {
+                latitude: -6.9107505,
+                longitude: 107.6629672,
+                latitudeDelta: 0.02,
+                longitudeDelta: 0.02,
+            }
+        };
+    }
+
+    isDropZone(gesture) {
+        return gesture.moveY > 0 && gesture.moveY < 350;
+    }
+
+    componentWillMount() {
+        this.mover = Animated.event([ null, { dy: this.state.pan.y }]);
+        this._panResponder = PanResponder.create({
+            onMoveShouldSetResponderCapture: () => {
+                return true;
+            },
+            onMoveShouldSetPanResponderCapture: () => {
+                if (!this.state.carousel) {
+                    return true;
+                }
+                return false;
+            },
+
+            onPanResponderGrant: (e, gestureState) => {
+                if (!this.state.carousel) {
+                    this.state.pan.setOffset({x: this.state.pan.x._value, y: this.state.pan.y._value});
+                    this.state.pan.setValue({x: 0, y: 0});
+                }
+            },
+            onPanResponderMove: (e, gesture) => {
+                if (this.state.carousel) {
+                    return;
+                }
+                return this.mover(e, gesture) ;
+            },
+            onPanResponderRelease: (e, gesture) => {
+                // Set the initial value to the current state
+                if (this.isDropZone(gesture)) {
+                    Animated.spring(
+                        this.state.pan,
+                        {toValue:{x:0,y:-280}}
+                    ).start(() => {
+                        this.state.pan.flattenOffset();
+                    });
+                    this.setState({
+                        carousel: true
+                    });
+                } else {
+                    Animated.spring(
+                        this.state.pan,
+                        {toValue:{x:0,y:0}}
+                    ).start();
+                    this.setState({
+                        carousel: false
+                    });
+                }
+            }
+        });
+        this._panResponder2 = PanResponder.create({
+            onMoveShouldSetResponderCapture: () => {
+                return true;
+            },
+            onMoveShouldSetPanResponderCapture: () => {
+                return true;
+            },
+
+            // Initially, set the value of x and y to 0 (the center of the screen)
+            onPanResponderGrant: (e, gestureState) => {
+                this.state.pan.setValue({x: 0, y: -280});
+            },
+
+            onPanResponderMove: (e, gesture) => {
+                if (this.state.carousel) {
+                    return;
+                }
+                return this.mover(e, gesture) ;
+            },
+
+            onPanResponderRelease: (e, gesture) => {
+                if (!this.isDropZone(gesture)) {
+                    Animated.spring(
+                        this.state.pan,
+                        {toValue:{x:0,y:0}}
+                    ).start();
+                    this.setState({
+                        carousel: false
+                    });
+                }
+            }
+        });
+    }
+    componentDidMount() {
+        setInterval(() => {
+            Animated.sequence([
+                Animated.spring(
+                    this.state.pulse,
+                    {toValue: 1, friction: 1}
+                ),
+                Animated.spring(
+                    this.state.pulse,
+                    {toValue: 0.8}
+                )
+            ]).start();
+        }, 2000);
+        Permissions.askAsync(Permissions.LOCATION).then(response => {
+            if (response.status === 'granted') {
+                Location.getCurrentPositionAsync({
+                    enableHighAccuracy: false
+                }).then(({coords, timestamp}) => {
+                    this.setState({
+                        region: {
+                            latitude: coords.latitude,
+                            longitude: coords.longitude,
+                            latitudeDelta: 0.02,
+                            longitudeDelta: 0.02,
+                        },
+                        marker: {
+                            latitude: coords.latitude,
+                            longitude: coords.longitude,
+                        }
+                    })
+                })
+            } else {
+                console.log('LOCATION not granted');
+            }
+        });
+    }
+    static route = {
+        styles: {
+            ...FadedZoom,
+        },
+    }
+    onRegionChange = (region) => {
+        this.setState({ region });
+    }
+    onBegin = () => {
+        this.props.navigator.push('begin');
+    };
+    onHistory = () => {
+        this.props.navigator.push('history');  
+    };
     render() {
+        let { pan, scale } = this.state;
+        let [translateX, translateY] = [pan.x, pan.y];
+        const {MapView} = Components;
         return (
             <View style={styles.container}>
                 <StatusBar
                     backgroundColor="white"
                     barStyle="dark-content"
                 />
-                <Components.MapView
-                    style={{flex: 1}}
-                    initialRegion={{
-                        latitude: 37.78825,
-                        longitude: -122.4324,
-                        latitudeDelta: 0.0922,
-                        longitudeDelta: 0.0421,
-                    }}
-                />
+                <MapView
+                    style={{flex: 1, marginBottom: 120}}
+                    region={this.state.region}
+                    onRegionChange={this.onRegionChange}
+                >
+                    <MapView.Marker
+                        coordinate={this.state.marker}
+                        title={'My Location'}
+                    >  
+                        <Animated.View style={{position: 'absolute', top: -20, left: -20, width: 40, height: 40, backgroundColor: 'rgba(98,186,85,0.4)', borderRadius: 20, transform: [{scale: this.state.pulse}]}} />
+                        <Animated.View style={{position: 'absolute', top: -40, left: -40, width: 80, height: 80, backgroundColor: 'rgba(98,186,85,0.2)', borderRadius: 40, transform: [{scale: this.state.pulse}]}} />
+                        <Animated.View style={{position: 'absolute', top: -10, left: -10, width: 20, height: 20, backgroundColor: 'rgba(98,186,85,1)', borderColor: '#fff', borderWidth: 2, borderRadius: 10, transform: [{scale: this.state.pulse}]}} />
+                    </MapView.Marker>
+                </MapView>
                 <View style={styles.toolbar}>
                     <Components.LinearGradient
                         colors={['rgba(255,255,255,1)', 'rgba(255,255,255,0.8)', 'rgba(255,255,255,0)']}
@@ -42,100 +216,39 @@ class HomeScreen extends React.Component {
                     </View>
                 </View>
                 <View style={styles.content}>
-                    <View style={styles.card} shadowColor={'#000'} shadowOffset={{width: 10, height: 10}} shadowOpacity={0.4} shadowRadius={30}>
-                        <View style={styles.cardHeader}>
-                            <View style={{flex: 1, alignItems: 'flex-start'}}>
-                                <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                                    <Image source={require('../images/profile-icon.png')} style={styles.profileicon} />
-                                    <Text style={{fontFamily: 'bebas-neue', fontSize: 18, color: '#282a2c'}}>PROFILE</Text>
-                                </View>
-                            </View>
-                            <View style={{flex: 1, alignItems: 'flex-end'}}>
-                                <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                                    <Text style={{fontFamily: 'bebas-neue', fontSize: 18, color: '#adadad'}}>ON FIRE! 🔥</Text>
-                                </View>
-                            </View>
-                        </View>
-                        <View style={styles.cardContent}>
-                            <Image source={require('../images/profile-picture.jpg')} style={styles.profilepicture}/>
-                            <Text style={{fontFamily: 'bebas-neue', fontSize: 64, color: '#ec242e'}}>12.035</Text>
-                            <Image source={require('../images/profile-icon-red.png')} style={styles.profileiconred} />
-                        </View>
-                        <View style={styles.cardContent}>
-                            <View style={{flex: 1}}>
-                                <Text style={styles.cardLabel}>TOTAL DISTANCE</Text>
-                                <Text style={styles.cardText}>27.81<Text style={styles.cardTextSmall}>KM</Text></Text>
-                            </View>
-                            <View style={{flex: 1}}>
-                                <Text style={styles.cardLabel}>TOTAL TIME</Text>
-                                <Text style={styles.cardText}>21:55:11</Text>
-                            </View>
-                        </View>
-                        <View style={styles.cardContent}>
-                            <View style={{flex: 1}}>
-                                <Text style={styles.cardLabel}>AVG PACE</Text>
-                                <Text style={styles.cardText}>6'42"</Text>
-                            </View>
-                            <View style={{flex: 1}}>
-                                <Text style={styles.cardLabel}>DAILY AVG</Text>
-                                <Text style={styles.cardText}>1.855</Text>
-                            </View>
-                        </View>
-                        <View style={{flexDirection: 'row', height: 120, paddingHorizontal: 25}}>
-                            <View style={{flex: 1}}>
-                                <View style={{height: 68, justifyContent: 'flex-end', alignItems: 'center', marginBottom: 5}}>
-                                    <View style={{height: 20, width: 15, borderRadius: 7, backgroundColor: '#f02733'}}>
-                                    </View>
-                                </View>
-                                <Text style={styles.graphText}>M</Text>
-                            </View>
-                            <View style={{flex: 1}}>
-                                <View style={{height: 68, justifyContent: 'flex-end', alignItems: 'center', marginBottom: 5}}>
-                                    <View style={{height: 30, width: 15, borderRadius: 7, backgroundColor: '#60ba52'}}>
-                                    </View>
-                                </View>
-                                <Text style={styles.graphText}>T</Text>
-                            </View>
-                            <View style={{flex: 1}}>
-                                <View style={{height: 68, justifyContent: 'flex-end', alignItems: 'center', marginBottom: 5}}>
-                                    <View style={{height: 40, width: 15, borderRadius: 7, backgroundColor: '#60ba52'}}>
-                                    </View>
-                                </View>
-                                <Text style={styles.graphText}>W</Text>
-                            </View>
-                            <View style={{flex: 1}}>
-                                <View style={{height: 68, justifyContent: 'flex-end', alignItems: 'center', marginBottom: 5}}>
-                                    <View style={{height: 54, width: 15, borderRadius: 7, backgroundColor: '#60ba52'}}>
-                                    </View>
-                                </View>
-                                <Text style={styles.graphText}>T</Text>
-                            </View>
-                            <View style={{flex: 1}}>
-                                <View style={{height: 68, justifyContent: 'flex-end', alignItems: 'center', marginBottom: 5}}>
-                                    <View style={{height: 52, width: 15, borderRadius: 7, backgroundColor: '#60ba52'}}>
-                                    </View>
-                                </View>
-                                <Text style={styles.graphText}>F</Text>
-                            </View>
-                            <View style={{flex: 1}}>
-                                <View style={{height: 68}}>
-                                </View>
-                                <Text style={styles.graphText}>S</Text>
-                            </View>
-                            <View style={{flex: 1}}>
-                                <View style={{height: 68}}>
-                                </View>
-                                <Text style={styles.graphText}>S</Text>
-                            </View>
-                        </View>
-                    </View>
+                    <Animated.View style={{transform: [{translateX}, {translateY}, {rotate: '0deg'}, {scale}], marginBottom: -180}} {...this._panResponder.panHandlers}>
+                        <ScrollView
+                            horizontal={true} 
+                            snapToInterval={windowWidth} 
+                            snapToAlignment={'center'}
+                            decelerationRate={0}
+                            scrollEnabled={this.state.carousel}
+                            automaticallyAdjustInsets={false}>
+                            <Animated.View {...this._panResponder2.panHandlers}>
+                                <TouchableOpacity onPress={this.onHistory}>
+                                    <CardProfile />
+                                </TouchableOpacity>
+                            </Animated.View>
+                            <Animated.View {...this._panResponder2.panHandlers}>
+                                <TouchableOpacity onPress={this.onHistory}>
+                                    <CardCoach />
+                                </TouchableOpacity>
+                            </Animated.View>
+                            <Animated.View {...this._panResponder2.panHandlers}>
+                                <TouchableOpacity onPress={this.onHistory}>
+                                    <CardHistory />
+                                </TouchableOpacity>
+                            </Animated.View>
+                        </ScrollView>
+                    </Animated.View>
                 </View>
                 <View style={styles.footer}>
                     <Components.LinearGradient
-                        colors={['rgba(255,255,255,0)', 'rgba(255,255,255,0.8)', 'rgba(255,255,255,1)']}
+                        pointerEvents="none"
+                        colors={['rgba(255,255,255,0)', 'rgba(255,255,255,0.8)', 'rgba(255,255,255,1)', 'rgba(255,255,255,1)']}
                         style={{height: 200, position: 'absolute', bottom: 0, left: 0, right: 0}} />
-                    <TouchableOpacity style={styles.buttonRedWrapper}>
-                        <View style={styles.buttonRed} shadowColor={'#000'} shadowOffset={{width: 10, height: 10}} shadowOpacity={0.6} shadowRadius={30}>
+                    <TouchableOpacity style={styles.buttonRedWrapper} onPress={this.onBegin}>
+                        <View style={styles.buttonRed} shadowColor={'#f02733'} shadowOffset={{width: 0, height: 10}} shadowOpacity={0.4} shadowRadius={20}>
                             <Text style={styles.buttonRedText}>BEGIN RUN</Text>
                         </View>
                     </TouchableOpacity>
@@ -183,7 +296,7 @@ const styles = StyleSheet.create({
         bottom: 0,
         left: 0,
         right: 0,
-        paddingHorizontal: 35
+        paddingHorizontal: 0
     },
     buttonRed: {
         backgroundColor: '#f02733',
@@ -197,60 +310,6 @@ const styles = StyleSheet.create({
         fontFamily: 'bebas-neue',
         fontSize: 24
     },
-    card: {
-        backgroundColor: '#fff',
-        borderRadius: 10,
-        height: 400,
-        marginBottom: 135,
-        flex: 1,
-    },
-    cardHeader: {
-        flexDirection: 'row',
-        paddingVertical: 20,
-        paddingHorizontal: 25,
-        paddingBottom: 0,
-    },
-    profileicon: {
-        height: 30,
-        width: 30
-    },
-    profileiconred: {
-        height: 30,
-        width: 30,
-        marginTop: 8
-    },
-    cardContent: {
-        flexDirection: 'row',
-        paddingHorizontal: 25,
-        marginVertical: 8,
-        justifyContent: 'center'
-    },
-    profilepicture: {
-        height: 60,
-        width: 60,
-        borderRadius: 30,
-        marginHorizontal: 10,
-        marginTop: 5
-    },
-    cardLabel: {
-        fontFamily: 'bebas-neue',
-        fontSize: 18,
-        color: '#adadad'
-    },
-    cardText: {
-        fontFamily: 'bebas-neue',
-        fontSize: 30
-    },
-    cardTextSmall: {
-        fontFamily: 'bebas-neue',
-        fontSize: 13
-    },
-    graphText: {
-        textAlign: 'center',
-        fontFamily: 'bebas-neue',
-        fontSize: 13,
-        color: '#adadad'
-    }
 });
 
 export default HomeScreen;

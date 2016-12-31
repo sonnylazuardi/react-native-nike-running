@@ -5,11 +5,21 @@ import {
     StyleSheet,
     Image,
     StatusBar,
-    ScrollView
+    ScrollView,
+    TouchableOpacity
 } from 'react-native';
 import { Components } from 'exponent';
+import FadedZoom from '../animations/FadedZoom';
 
 class HistoryScreen extends React.Component {
+    static route = {
+        styles: {
+            ...FadedZoom,
+        },
+    };
+    onBack = () => {
+        this.props.navigator.pop();
+    };
     render() {
         return (
             <View style={styles.container}>
@@ -22,7 +32,9 @@ class HistoryScreen extends React.Component {
                         <Image source={require('../images/shoe-icon.png')} style={styles.iconshoe} />
                         <Text style={styles.titleText}>LAST RUN</Text>
                     </View>
-                    <Image source={require('../images/x-icon.png')} style={styles.iconx} />
+                    <TouchableOpacity onPress={this.onBack}>
+                        <Image source={require('../images/x-icon.png')} style={styles.iconx} />
+                    </TouchableOpacity>
                 </View>
                 <ScrollView>
                     <View style={{height: 400, zIndex: 1, marginBottom: 30}}>

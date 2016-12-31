@@ -7,6 +7,11 @@ import {
 } from 'react-native';
 
 class SplashScreen extends React.Component {
+    componentDidMount() {
+        setTimeout(() => {
+            this.props.navigator.push('home');
+        }, 1500);
+    }
     render() {
         return (
             <View style={styles.container}>

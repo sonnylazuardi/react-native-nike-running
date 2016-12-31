@@ -9,11 +9,28 @@ import {
     TouchableOpacity
 } from 'react-native';
 import { Components } from 'exponent';
+import FadedZoom from '../animations/FadedZoom';
 
 class BeginRunScreen extends React.Component {
+    static route = {
+        styles: {
+            ...FadedZoom,
+        },
+    }
+
+    onBack = () => {
+        this.props.navigator.pop();
+    };
+
+    onRun = () => {
+        this.props.navigator.push('running');
+    };
+
     componentDidMount() {
         this.refs.scrollView.scrollTo({y: 0, x: 85, animated: true});
     }
+    
+
     render() {
         return (
             <View style={styles.container}>
@@ -23,7 +40,9 @@ class BeginRunScreen extends React.Component {
                 />
                 <View style={styles.toolbar}>
                     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-                        <Image source={require('../images/back-icon.png')} style={styles.logoicon} />
+                        <TouchableOpacity onPress={this.onBack}>
+                            <Image source={require('../images/back-icon.png')} style={styles.logoicon} />
+                        </TouchableOpacity>
                     </View>
                     <View style={{flex: 3, justifyContent: 'center', alignItems: 'center'}}>
                         <Image source={require('../images/logonike-white.png')} style={styles.logosmall} />
@@ -134,14 +153,14 @@ class BeginRunScreen extends React.Component {
                             </ScrollView>
                         </View>
                     </View>
-                    <View style={{paddingVertical: 10, paddingHorizontal: 50}}>
-                        <TouchableOpacity style={styles.buttonRedWrapper}>
-                            <View style={styles.buttonRed} shadowColor={'#000'} shadowOffset={{width: 10, height: 10}} shadowOpacity={0.6} shadowRadius={30}>
-                                <Text style={styles.buttonRedText}>START</Text>
-                            </View>
-                        </TouchableOpacity>
-                    </View>
                 </ScrollView>
+                <View style={{paddingVertical: 10, paddingHorizontal: 50, position: 'absolute', bottom: 15, left: 0, right: 0}}>
+                    <TouchableOpacity style={styles.buttonRedWrapper} onPress={this.onRun}>
+                        <View style={styles.buttonRed} shadowColor={'#000'} shadowOffset={{width: 10, height: 10}} shadowOpacity={0.6} shadowRadius={30}>
+                            <Text style={styles.buttonRedText}>START</Text>
+                        </View>
+                    </TouchableOpacity>
+                </View>
             </View>
         );
     }
