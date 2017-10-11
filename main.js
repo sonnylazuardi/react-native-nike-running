@@ -1,4 +1,4 @@
-import Exponent from 'exponent';
+import Exponent from 'expo';
 import React from 'react';
 import {
     StyleSheet,
@@ -6,7 +6,7 @@ import {
     View,
 } from 'react-native';
 
-import { Font, Components } from 'exponent';
+import { Font, AppLoading } from 'expo';
 
 import SplashScreen from './src/components/SplashScreen';
 import HomeScreen from './src/components/HomeScreen';
@@ -19,7 +19,7 @@ import {
     NavigationProvider,
     StackNavigation,
     NavigationStyles
-} from '@exponent/ex-navigation';
+} from '@expo/ex-navigation';
 
 const Router = createRouter(() => ({
     splash: () => SplashScreen,
@@ -48,7 +48,7 @@ class App extends React.Component {
 
     render() {
         if (!this.state.fontLoaded) {
-            return <Components.AppLoading />;
+            return <AppLoading />;
         }
 
         return (

@@ -8,7 +8,7 @@ import {
     ScrollView,
     TouchableOpacity
 } from 'react-native';
-import { Components } from 'exponent';
+import { LinearGradient } from 'expo';
 import FadedZoom from '../animations/FadedZoom';
 
 class BeginRunScreen extends React.Component {
@@ -53,7 +53,7 @@ class BeginRunScreen extends React.Component {
                 </View>
                 <ScrollView>
                     <View style={styles.mainBar}>
-                        <Components.LinearGradient
+                        <LinearGradient
                             pointerEvents="none"
                             colors={['rgba(0,0,0,0.8)', 'rgba(0,0,0,0)', 'rgba(0,0,0,0)', 'rgba(0,0,0,0)', 'rgba(0,0,0,0.8)']}
                             start={[0, 0]} end={[1, 0]}
