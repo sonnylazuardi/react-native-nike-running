@@ -13,7 +13,7 @@ import {
     Dimensions
 } from 'react-native';
 
-import { Components, Location, Permissions } from 'exponent';
+import { MapView, LinearGradient, Location, Permissions } from 'expo';
 import FadedZoom from '../animations/FadedZoom';
 import CardProfile from './CardProfile';
 import CardCoach from './CardCoach';
@@ -180,7 +180,6 @@ class HomeScreen extends React.Component {
     render() {
         let { pan, scale } = this.state;
         let [translateX, translateY] = [pan.x, pan.y];
-        const {MapView} = Components;
         return (
             <View style={styles.container}>
                 <StatusBar
@@ -202,7 +201,7 @@ class HomeScreen extends React.Component {
                     </MapView.Marker>
                 </MapView>
                 <View style={styles.toolbar}>
-                    <Components.LinearGradient
+                    <LinearGradient
                         colors={['rgba(255,255,255,1)', 'rgba(255,255,255,0.8)', 'rgba(255,255,255,0)']}
                         style={{height: 50, position: 'absolute', top: 0, left: 0, right: 0}} />
                     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
@@ -243,7 +242,7 @@ class HomeScreen extends React.Component {
                     </Animated.View>
                 </View>
                 <View style={styles.footer}>
-                    <Components.LinearGradient
+                    <LinearGradient
                         pointerEvents="none"
                         colors={['rgba(255,255,255,0)', 'rgba(255,255,255,0.8)', 'rgba(255,255,255,1)', 'rgba(255,255,255,1)']}
                         style={{height: 200, position: 'absolute', bottom: 0, left: 0, right: 0}} />

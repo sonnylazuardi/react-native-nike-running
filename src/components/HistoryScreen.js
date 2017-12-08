@@ -8,7 +8,7 @@ import {
     ScrollView,
     TouchableOpacity
 } from 'react-native';
-import { Components } from 'exponent';
+import { MapView, LinearGradient } from 'expo';
 import FadedZoom from '../animations/FadedZoom';
 
 class HistoryScreen extends React.Component {
@@ -38,7 +38,7 @@ class HistoryScreen extends React.Component {
                 </View>
                 <ScrollView>
                     <View style={{height: 400, zIndex: 1, marginBottom: 30}}>
-                        <Components.MapView
+                        <MapView
                             style={{height: 400}}
                             initialRegion={{
                                 latitude: 37.78825,
@@ -47,7 +47,7 @@ class HistoryScreen extends React.Component {
                                 longitudeDelta: 0.0421,
                             }}
                         />
-                        <Components.LinearGradient
+                        <LinearGradient
                             colors={['rgba(255,255,255,0)', 'rgba(255,255,255,0.8)', 'rgba(255,255,255,1)', 'rgba(255,255,255,1)']}
                             style={{height: 150, position: 'absolute', bottom: 0, left: 0, right: 0}} />
                         <View style={{height: 150, position: 'absolute', bottom: 0, left: 0, right: 0, paddingHorizontal: 35, paddingTop: 40}}>
