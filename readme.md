@@ -16,13 +16,21 @@ Website: http://nikerunning.sonnylab.com/
 
 Expo Snack: https://snack.expo.io/@sonnylazuardi/nike-running-redesign
 
-## Installation
+## Installation & Running
 
 ```
 npm i
 react-native run-ios
 react-native run-android
 ```
+
+for the web:
+
+```
+react-native start
+```
+
+open `http://localhost:8081/dom`
 
 ## Features
 
