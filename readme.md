@@ -16,6 +16,14 @@ Website: http://nikerunning.sonnylab.com/
 
 Expo Snack: https://snack.expo.io/@sonnylazuardi/nike-running-redesign
 
+## Installation
+
+```
+npm i
+react-native run-ios
+react-native run-android
+```
+
 ## Features
 
 - FadedZoom Transition
