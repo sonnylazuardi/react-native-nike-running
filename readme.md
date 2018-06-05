@@ -1,6 +1,6 @@
-# Nike+ Running - React Native
+# Nike+ Running - React Native & React Native DOM (Web)
 
-UI & UX Prototype of redesigned Nike+ Running App and now support Website 🎉 thanks to [React Native DOM](https://github.com/vincentriemer/react-native-dom)
+UI & UX Prototype of redesigned Nike+ Running App and now support website 🎉 thanks to [React Native DOM](https://github.com/vincentriemer/react-native-dom)
 
 ![proto](./assets/nikerunningwebsite.gif)
 
@@ -9,6 +9,12 @@ UI & UX Prototype of redesigned Nike+ Running App and now support Website 🎉 t
 ![proto](./assets/dribnike.gif)
 
 Inspiration: https://dribbble.com/shots/2764470-Rethinking-Nike-Running
+
+## Motivation
+
+I recently watched the [talk](https://youtu.be/aOWIJ4Mgb2k) from [@vincentriemer](https://twitter.com/vincentriemer) about [react native dom](https://github.com/vincentriemer/react-native-dom) and I amazed that we can port directly our current react native app into website. Then, I started this experiment and see the performance and the gesture in the web.
+
+The result is fascinating. I can reuse almost all of the components except the map and linear gradient, so I make a quick hack for the LinearGradient Component.
 
 ## Demo
 
