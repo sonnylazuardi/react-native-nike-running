@@ -1,15 +1,33 @@
 {
-  "name": "nike-plus-running",
-  "version": "0.0.0",
-  "description": "Hello Exponent!",
-  "author": null,
+  "name": "nikerunning",
+  "version": "0.0.1",
   "private": true,
-  "main": "main.js",
+  "scripts": {
+    "start": "node node_modules/react-native/local-cli/cli.js start",
+    "test": "jest"
+  },
   "dependencies": {
-    "@expo/ex-navigation": "^3.1.0",
-    "@expo/vector-icons": "^5.2.0",
-    "expo": "^21.0.0",
-    "react": "16.0.0-alpha.12",
-    "react-native": "https://github.com/expo/react-native/archive/sdk-21.0.2.tar.gz"
+    "fontfaceobserver": "^2.0.13",
+    "react": "16.3.1",
+    "react-native": "0.55.4",
+    "react-native-dom": "0.1.1",
+    "react-native-linear-gradient": "^2.4.0",
+    "react-native-maps": "^0.21.0",
+    "react-navigation": "^2.0.2"
+  },
+  "devDependencies": {
+    "babel-jest": "22.4.4",
+    "babel-preset-react-native": "4.0.0",
+    "jest": "22.4.4",
+    "react-test-renderer": "16.3.1",
+    "rnpm-plugin-dom": "^0.1.1"
+  },
+  "jest": {
+    "preset": "react-native"
+  },
+  "rnpm": {
+    "assets": [
+      "./src/fonts/"
+    ]
   }
 }
