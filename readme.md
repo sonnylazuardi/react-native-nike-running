@@ -1,47 +1,49 @@
 # Nike+ Running - React Native
 
-UI & UX Prototype of redesigned Nike+ Running App.
+UI & UX Prototype of redesigned Nike+ Running App and now support Website 🎉 thanks to [React Native DOM](https://github.com/vincentriemer/react-native-dom)
+
+![proto](./assets/nikerunningwebsite.gif)
 
 ![gif](http://i.giphy.com/l3vR7vOmGZYEZwUbC.gif)
 
-![proto](https://d13yacurqjgara.cloudfront.net/users/68551/screenshots/2764470/ezgif-3422165510.gif)
+![proto](./assets/dribnike.gif)
 
 Inspiration: https://dribbble.com/shots/2764470-Rethinking-Nike-Running
 
 ## Demo
 
-Exponent: https://exp.host/@sonnylazuardi/nike-plus-running
+Website: http://nikerunning.sonnylab.com/
+
+Expo Snack: https://snack.expo.io/@sonnylazuardi/nike-running-redesign
 
 ## Features
 
 - FadedZoom Transition
-This will add FadedZoom transition to ex-navigator (you can use it on another project)
+  This will add forFadedZoom transition to react-navigation (you can use it on another project)
 
 ```
-import FadedZoom from '../animations/FadedZoom';
-
-static route = {
-    styles: {
-        ...FadedZoom,
-    },
-};
+    transitionConfig: () => ({
+      screenInterpolator: sceneProps => {
+        return forFadedZoom(sceneProps);
+      }
+    })
 ```
 
 - Swipeable Card
-The card can be swiped up-down to toggle hide and left-right to change current card view.
+  The card can be swiped up-down to toggle hide and left-right to change current card view. Pan responder works smooth on the web 💪
 
 - Geolocation & Animated Marker
-The homescreen will show your current location with animated marker
+  The homescreen will show your current location with animated marker. For map the web now still fallback to image, need to work on the map component for RND.
 
 - Box Shadow & Gradient
-(iOS only) There will be shadow around the button and cards.
+  (iOS only) There will be shadow around the button and cards. I do some tricky part to achieve the linear gradient. I use gradient image and use similar LinearGradient props:
 
-## MIT Licensed
+```
+if (Platform.OS != "dom") {
+  var LinearGradient = require("react-native-linear-gradient").default;
+} else {
+  var LinearGradient = require("../components/LinearGradient").default;
+}
+```
 
-© 2016 Sonny Lazuardi
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+© 2018 Sonny Lazuardi
